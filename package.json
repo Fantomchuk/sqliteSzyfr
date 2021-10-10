@@ -1,0 +1,34 @@
+{
+    "name": "sqlite_scripted",
+    "version": "1.0.4",
+    "description": "",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "mac": "electron-packager . sqlite_scripted --out=dist/osx --platform=darwin --arch=x64 --overwrite to force --asar",
+        "win": "electron-packager . sqlite_scripted --out=dist/win --platform=win32 --arch=x64 --overwrite to force --asar"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "babel-eslint": "^10.1.0",
+        "electron": "^13.1.7",
+        "electron-packager": "^15.2.0",
+        "eslint": "^7.32.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-html": "^6.2.0",
+        "eslint-plugin-import": "^2.24.2",
+        "eslint-plugin-prettier": "^4.0.0",
+        "prettier": "^2.4.1"
+    },
+    "dependencies": {
+        "@journeyapps/sqlcipher": "^5.2.0",
+        "asar": "^3.0.3",
+        "keytar": "^7.7.0",
+        "rxjs": "^7.3.0",
+        "sqlite3": "^4.2.0",
+        "uuid": "^8.3.2"
+    }
+}
+  
