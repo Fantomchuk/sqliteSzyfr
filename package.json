@@ -6,7 +6,8 @@
     "scripts": {
         "start": "electron .",
         "mac": "electron-packager . sqlite_scripted --out=dist/osx --platform=darwin --arch=x64 --overwrite to force --asar",
-        "win": "electron-packager . sqlite_scripted --out=dist/win --platform=win32 --arch=x64 --overwrite to force --asar"
+        "win": "electron-packager . sqlite_scripted --out=dist/win --platform=win32 --arch=x64 --overwrite to force --asar",
+        "documentation": "node_modules/.bin/jsdoc --configure jsdoc.json --verbose"
     },
     "author": "",
     "license": "ISC",
@@ -20,6 +21,7 @@
         "eslint-plugin-html": "^6.2.0",
         "eslint-plugin-import": "^2.24.2",
         "eslint-plugin-prettier": "^4.0.0",
+        "minami": "^1.2.3",
         "prettier": "^2.4.1"
     },
     "dependencies": {
@@ -31,4 +33,3 @@
         "uuid": "^8.3.2"
     }
 }
-  
