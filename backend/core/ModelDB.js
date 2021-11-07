@@ -16,7 +16,6 @@ class ModelDb {
 
     // Створюємо структуру бази даних
     async init() {
-        console.log("init");
         const initName = `CREATE TABLE IF NOT EXISTS ${this.tableName} ${this.#createSchema()}`;
         try {
             await DataBase.run(initName);

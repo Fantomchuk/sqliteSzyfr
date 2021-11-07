@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = "true";
+
 const { debounceTime, map } = require("rxjs/operators");
 const DataBase = require("./backend/core/DataBase");
 const LocalLogs = require("./backend/core/LocalLogs");
@@ -108,7 +110,7 @@ function createWindow() {
             preload: path.join(__dirname, "preload.js"),
         },
     });
-    mainWindow.loadFile("index.html");
+    mainWindow.loadFile(`${__dirname}/documentation/jsdoc/index.html`);
 
     // command+R
     mainWindow.webContents.on("devtools-reload-page", () => {
