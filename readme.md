@@ -55,4 +55,4 @@
 <span style='color: #ff5252;'>npm run mac</span>
 
 # Документація
-<a href="https://github.com/Fantomchuk/sqliteSzyfr/documentation/jsdoc/index.html" target="_blank">Документація</a>
+<a href="https://github.com/Fantomchuk/sqliteSzyfr/tree/master/documentation/jsdoc" target="_blank">Документація</a>
