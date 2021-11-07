@@ -27,16 +27,51 @@ const instructions = {
     BgCyan: "\x1b[46m",
     BgWhite: "\x1b[47m",
 };
+/**
+ * Даний модуль служить до кольоровання логів які друкуємо в консолі на стороні сервера
+ * @module AppColorLog
+ */
 module.exports = {
+    /**
+     * Виведе в консоль білий текст на червоному фоні
+     * @param {string|number} msg повідомлення яке хочемо надрукувати
+     * @example
+     * const AppColorLog = require("./backend/core/AppColorLog");
+     * AppColorLog.error("test");
+     */
     error(msg) {
         console.log(`${instructions.BgRed}${msg}${instructions.Reset}`);
     },
+
+    /**
+     * Виведе в консоль чорний текст на синьому фоні
+     * @param {string|number} msg повідомлення яке хочемо надрукувати
+     * @example
+     * const AppColorLog = require("./backend/core/AppColorLog");
+     * AppColorLog.info("test");
+     */
     info(msg) {
         console.log(`${instructions.BgCyan}${instructions.FgBlack}${msg}${instructions.Reset}`);
     },
+
+    /**
+     * Виведе в консоль чорний текст на зеленому фоні
+     * @param {string|number} msg повідомлення яке хочемо надрукувати
+     * @example
+     * const AppColorLog = require("./backend/core/AppColorLog");
+     * AppColorLog.success("test");
+     */
     success(msg) {
         console.log(`${instructions.BgGreen}${instructions.FgBlack}${msg}${instructions.Reset}`);
     },
+
+    /**
+     * Виведе в консоль чорний текст на жовтому фоні
+     * @param {string|number} msg повідомлення яке хочемо надрукувати
+     * @example
+     * const AppColorLog = require("./backend/core/AppColorLog");
+     * AppColorLog.warning("test");
+     */
     warning(msg) {
         console.log(`${instructions.BgYellow}${instructions.FgBlack}${msg}${instructions.Reset}`);
     },

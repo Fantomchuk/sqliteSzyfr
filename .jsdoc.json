@@ -10,7 +10,7 @@
     },
     "plugins": ["plugins/markdown"],
     "opts": {
-        "destination": "./doc/custom/",
+        "destination": "./documentation/jsdoc/",
         "encoding": "utf8",
         "private": true,
         "recurse": true,

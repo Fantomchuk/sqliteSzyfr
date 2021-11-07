@@ -7,24 +7,34 @@ const userLocalLogs = `${app.getPath("userData")}/localLogs`;
 if (!fs.existsSync(`${userLocalLogs}`)) fs.mkdirSync(`${userLocalLogs}`);
 
 /**
- * Służy do lokalnych logów
- * @module LocalLogs
- * @memberof backendJS
+ * Створюється один екземпляр класу, на якому і проводимо всі операції.
+ * Цей екземпляр експортуємо з цього файлу, і будемо його підключати в інших файлах.
+ * @class LocalLogs
+ * @classdesc Відповідає за додання і створення локальних файлів з комунікатами логів
+ * @example
+ * const LocalLogs = require("./backend/core/LocalLogs");
  */
 class LocalLogs {
+    // розширення файла до якого будемо записувати
     #extension = ".log";
 
+    // назва контроллера
     #controller = null;
 
+    // назва акції
     #action = null;
 
+    // текст який записуємо до лога
     #msg = null;
 
+    // додаткова інформація до логу
     #json = null;
 
+    // дата додання лога, потрібна для створення файлу
     #date = null;
 
-    #getCallerFile = () => {
+    // функція яка поверне нам файл, лінійку і позицію де було викликано функцію add() з помилкою
+    static #getCallerFile() {
         const originalFunc = Error.prepareStackTrace;
 
         let callerFileName;
@@ -52,9 +62,10 @@ class LocalLogs {
         Error.prepareStackTrace = originalFunc;
 
         return `${callerFileName}:${callerFileLine}:${callerFileColumn}`;
-    };
+    }
 
-    #checkFileExist = () => {
+    // Провіряє чи істує файл з сьогоднішньою датою
+    #checkFileExist() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}/${
             parseInt(this.#date.getUTCMonth(), 10) + 1
         }/${parseInt(this.#date.getUTCDate(), 10)}/${this.#controller}${this.#extension}`;
@@ -67,9 +78,10 @@ class LocalLogs {
             // console.log(2);
             this.#checkDayDir();
         }
-    };
+    }
 
-    #checkDayDir = () => {
+    // Провіряє чи істує папка з днем
+    #checkDayDir() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}/${
             parseInt(this.#date.getUTCMonth(), 10) + 1
         }/${parseInt(this.#date.getUTCDate(), 10)}`;
@@ -82,9 +94,10 @@ class LocalLogs {
             // console.log(4);
             this.#checkMonthDir();
         }
-    };
+    }
 
-    #checkMonthDir = () => {
+    // Провіряє чи істує папка місяця
+    #checkMonthDir() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}/${parseInt(this.#date.getUTCMonth(), 10) + 1}`;
         try {
             // console.log(5);
@@ -95,9 +108,10 @@ class LocalLogs {
             // console.log(6);
             this.#checkYearDir();
         }
-    };
+    }
 
-    #checkYearDir = () => {
+    // Провіряє чи істує папка року
+    #checkYearDir() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}`;
         try {
             // console.log(7);
@@ -108,9 +122,10 @@ class LocalLogs {
             // console.log(8);
             this.#createYearDir();
         }
-    };
+    }
 
-    #createYearDir = () => {
+    // Створює папку року
+    #createYearDir() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}`;
         try {
             // console.log(9);
@@ -120,9 +135,10 @@ class LocalLogs {
             AppColorLog.warning("LocalLogs::ERROR createYearDir");
             dialog.showMessageBox(null, { type: "error", message: "LocalLogs::ERROR createYearDir", buttons: ["ok"] });
         }
-    };
+    }
 
-    #createMonthDir = () => {
+    // Створює папку місяця
+    #createMonthDir() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}/${parseInt(this.#date.getUTCMonth(), 10) + 1}`;
         try {
             // console.log(10);
@@ -132,9 +148,10 @@ class LocalLogs {
             AppColorLog.warning("LocalLogs::ERROR createMonthDir");
             dialog.showMessageBox(null, { type: "error", message: "LocalLogs::ERROR createMonthDir", buttons: ["ok"] });
         }
-    };
+    }
 
-    #createDayDir = () => {
+    // Створює папку дня
+    #createDayDir() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}/${
             parseInt(this.#date.getUTCMonth(), 10) + 1
         }/${parseInt(this.#date.getUTCDate(), 10)}`;
@@ -146,15 +163,16 @@ class LocalLogs {
             AppColorLog.warning("LocalLogs::ERROR createDayDir");
             dialog.showMessageBox(null, { type: "error", message: "LocalLogs::ERROR createDayDir", buttons: ["ok"] });
         }
-    };
+    }
 
-    #createFile = () => {
+    // Створює файл
+    #createFile() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}/${
             parseInt(this.#date.getUTCMonth(), 10) + 1
         }/${parseInt(this.#date.getUTCDate(), 10)}/${this.#controller}${this.#extension}`;
         try {
             // console.log(12);
-            fs.writeFileSync(path, "", { encoding: "utf8", flags: "a" });
+            // (V1) s.writeFileSync(path, "", { encoding: "utf8", flags: "a" });
             this.#writeToFile();
         } catch (error) {
             AppColorLog.warning(`LocalLogs::ERROR createFile ${error}`);
@@ -164,27 +182,30 @@ class LocalLogs {
                 buttons: ["ok"],
             });
         }
-    };
+    }
 
-    #writeToFile = () => {
+    // Записує до файла лог
+    #writeToFile() {
         const path = `${userLocalLogs}/${this.#date.getUTCFullYear()}/${
             parseInt(this.#date.getUTCMonth(), 10) + 1
         }/${parseInt(this.#date.getUTCDate(), 10)}/${this.#controller}${this.#extension}`;
 
-        const hours = this.#date.getUTCHours() < 10 ? `0${this.#date.getUTCHours()}` : `${this.#date.getUTCHours()}`;
+        const dataForTime = new Date();
+        const hours = dataForTime.getUTCHours() < 10 ? `0${dataForTime.getUTCHours()}` : `${dataForTime.getUTCHours()}`;
         const minutes =
-            this.#date.getUTCMinutes() < 10 ? `0${this.#date.getUTCMinutes()}` : `${this.#date.getUTCMinutes()}`;
+            dataForTime.getUTCMinutes() < 10 ? `0${dataForTime.getUTCMinutes()}` : `${dataForTime.getUTCMinutes()}`;
         const seconds =
-            this.#date.getUTCSeconds() < 10 ? `0${this.#date.getUTCSeconds()}` : `${this.#date.getUTCSeconds()}`;
+            dataForTime.getUTCSeconds() < 10 ? `0${dataForTime.getUTCSeconds()}` : `${dataForTime.getUTCSeconds()}`;
         const time = `${hours}:${minutes}:${seconds}`;
 
         const oneRow = `${time}::${this.#action}::${this.#msg}::${this.#json}\r\n`;
 
         let fileObj;
         try {
-            // console.log(13);
-            fileObj = fs.openSync(path, "a");
-            fs.appendFileSync(fileObj, oneRow, "utf8");
+            // console.log(13); не варто ьтак користатися, бо вчитуємо цілий файл
+            // (V1) fileObj = fs.openSync(path, "a");
+            // (V1) fs.appendFileSync(fileObj, oneRow, "utf8");
+            fs.appendFileSync(path, oneRow);
         } catch (error) {
             // console.log(14);
             AppColorLog.warning(`LocalLogs::ERROR createFile ${error}`);
@@ -197,14 +218,27 @@ class LocalLogs {
             // console.log(15);
             if (fileObj !== undefined) fs.closeSync(fileObj);
         }
-    };
+    }
 
-    add = (controller, action, msg, json) => {
+    /**
+     * Створення і додання до файлу нового логу
+     * @param {string} controller назва контроллера або модуля в якому викликана функція
+     * @param {string} action назва акції яку виконуємо
+     * @param {string} msg повідомлення яке хочемо записати
+     * @param {object|string|number} [json] додаткові параметри до повідомлення
+     * @return {undefined} не повертає нічого
+     * @example
+     * const LocalLogs = require("./backend/core/LocalLogs");
+     * LocalLogs.add("MAIN", "UsersDBModel", "delete-user", {id: 1});
+     */
+    add(controller, action, msg, json) {
         if (controller) {
             this.#controller = `${controller}`;
             this.#controller = this.#controller.toLocaleLowerCase();
         } else {
-            AppColorLog.warning(`LocalLogs::ERROR first parameter(controller) is not found:  ${this.#getCallerFile()}`);
+            AppColorLog.warning(
+                `LocalLogs::ERROR first parameter(controller) is not found:  ${LocalLogs.#getCallerFile()}`
+            );
             return;
         }
 
@@ -212,14 +246,16 @@ class LocalLogs {
             this.#action = `${action}`;
             this.#action = this.#action.toLocaleLowerCase();
         } else {
-            AppColorLog.warning(`LocalLogs::ERROR first parameter(action) is not found:  ${this.#getCallerFile()}`);
+            AppColorLog.warning(
+                `LocalLogs::ERROR first parameter(action) is not found:  ${LocalLogs.#getCallerFile()}`
+            );
             return;
         }
 
         if (msg && Object.prototype.toString.call(msg) === "[object String]") {
             this.#msg = msg;
         } else {
-            AppColorLog.warning(`LocalLogs::ERROR first parameter(msg) is not string:  ${this.#getCallerFile()}`);
+            AppColorLog.warning(`LocalLogs::ERROR first parameter(msg) is not string:  ${LocalLogs.#getCallerFile()}`);
             return;
         }
 
@@ -231,12 +267,20 @@ class LocalLogs {
 
         this.#date = new Date();
         this.#checkFileExist();
-    };
+    }
 
-    getFullPath = () => {
+    /**
+     * Повертає лінк до свореного файлу
+     * @returns {string} лінк до файлу
+     * @example
+     * const LocalLogs = require("./backend/core/LocalLogs");
+     * const pathLocalFiles = LocalLogs.getFullPath();
+     * => "/Users/nazar/Library/Application Support/sqliteSzyfr/localLogs/2021/11/4/main.log"
+     */
+    getFullPath() {
         return `${userLocalLogs}/${this.#date.getUTCFullYear()}/${
             parseInt(this.#date.getUTCMonth(), 10) + 1
         }/${parseInt(this.#date.getUTCDate(), 10)}/${this.#controller}${this.#extension}`;
-    };
+    }
 }
 module.exports = new LocalLogs();

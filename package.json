@@ -1,13 +1,13 @@
 {
-    "name": "sqlite_scripted",
+    "name": "sqliteSzyfr",
     "version": "1.0.4",
     "description": "",
     "main": "main.js",
     "scripts": {
         "start": "electron .",
-        "mac": "electron-packager . sqlite_scripted --out=dist/osx --platform=darwin --arch=x64 --overwrite to force --asar",
-        "win": "electron-packager . sqlite_scripted --out=dist/win --platform=win32 --arch=x64 --overwrite to force --asar",
-        "docum": "node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
+        "mac": "electron-packager . sqliteSzyfr --out=dist/osx --platform=darwin --arch=x64 --overwrite to force --asar",
+        "win": "electron-packager . sqliteSzyfr --out=dist/win --platform=win32 --arch=x64 --overwrite to force --asar",
+        "doc": "jsdoc -c .jsdoc.json"
     },
     "author": "",
     "license": "ISC",

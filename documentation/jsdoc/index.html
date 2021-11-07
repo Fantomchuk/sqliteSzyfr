@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>sqlite_scripted - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">sqlite_scripted</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="DataBase.html">DataBase</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DataBase.html#all">all</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DataBase.html#each">each</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DataBase.html#getAllRows">getAllRows</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="DataBase.html#run">run</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="LocalLogs.html">LocalLogs</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="LocalLogs.html#add">add</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="LocalLogs.html#getFullPath">getFullPath</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="ModelDb.html">ModelDb</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ModelDb.html#delete">delete</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ModelDb.html#find">find</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="ModelDb.html#upsert">upsert</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Settings.html">Settings</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Users.html">Users</a></span></li><li class="nav-heading">Modules</li><li class="nav-heading"><span class="nav-item-type type-module">M</span><span class="nav-item-name"><a href="module-AppColorLog.html">AppColorLog</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-AppColorLog.html#.error">error</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-AppColorLog.html#.info">info</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-AppColorLog.html#.success">success</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module-AppColorLog.html#.warning">warning</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">sqlite_scripted</h1>
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>Про проєкт</h1>
+<ul>
+<li>&quot;name&quot; =&gt; &quot;Local DB&quot;</li>
+<li>&quot;version&quot; =&gt; &quot;1.0.5&quot;</li>
+</ul>
+<h1>Ціль для чого був створений даний проєкт</h1>
+<p>Цілю данного проєкту являється створення зашифрованої локальної бази даних за допомогою &quot;Electrona&quot;. Під час виявлення помилки роботи програми, дана подія записується до локального файлу і відображається в консолі. Це необхідно для покращення праці програми та коду.</p>
+<h1>Використані бібліотекі Node.js</h1>
+<h2>&quot;sqlite3&quot;: &quot;^4.2.0&quot;</h2>
+<p>основна бібліотека для баз даних</p>
+<h2>&quot;@journeyapps/sqlcipher&quot;: &quot;^5.2.0&quot;</h2>
+<p>накладка для шифрування локальної бази даних</p>
+<h2>&quot;asar&quot;: &quot;^3.0.3&quot;</h2>
+<p>бібліотека для вигенерування проєкту &quot;Electron&quot; на різні системи.</p>
+<h2>&quot;keytar&quot;: &quot;^7.7.0&quot;</h2>
+<p>бібліотека для приховування ключа шифрування, якій буде зберігатися в пакеті ключів на локальній машині</p>
+<h2>&quot;rxjs&quot;: &quot;^7.3.0&quot;</h2>
+<p>бібліотека реактивних розширень для JavaScript, використовуємо для наслуховування змін в базі даних в проєкті</p>
+<h2>&quot;uuid&quot;: &quot;^8.3.2&quot;</h2>
+<p>бібліотека для вигенерування унікальних ключів</p>
+<h1>Опис як працює</h1>
+<p>Для того щоб додати до бази даних нову табличку потрібно в папці ./backend/dbModels створити новий клас. Новий клас повинен називатися так само як табличка в базі даних. Новий клас можна створити на основі прикладу _example.js. Після створення цього класу, з нього одразу можна користатися. Вистачить його підключити як const newClass = require(&quot;./backend/dbModels/newClass&quot;). Цей клас одразу унаслідує всі методи його батьківського елементу, тобто ModelDB.js якій уже має кілька дефолтових метод (шукання, усування і додавання). Більш детальніша інформація по даному класі і його методах знаходиться в документації.</p>
+<h1>Запуск проєкту</h1>
+<p>Для запуску програми потрібно на локальній машині склонувати репозиторій Git-u, а потім виконати інсталяції і компіляції пакетів для подальшої роботи.</p>
+<h2>1. Створюємо папку для нашого проєкту</h2>
+<p><span style='color: #ff5252;'>cd ~ Desktop</span><br>
+<span style='color: #ff5252;'>mkdir electron</span></p>
+<h2>2. Переходимо в папку і виконуємо клонування репозиторію Git-а</h2>
+<p><span style='color: #ff5252;'>cd electron</span><br>
+<span style='color: #ff5252;'>git clone https://github.com/Fantomchuk/sqliteSzyfr.git</span></p>
+<h2>3. Переходимо в створену папку і виконуємо інсталяцію бібліотек</h2>
+<p><span style='color: #ff5252;'>cd sqliteSzyfr</span><br>
+<span style='color: #ff5252;'>npm install</span></p>
+<h2>4. Запускаємо проєкт</h2>
+<p><span style='color: #ff5252;'>npm run star</span></p>
+<h2>5. Генеруємо проєкти під конкретну систему</h2>
+<h3>5.1 WINDOWS</h3>
+<p>Для того щоб сворити додаток на системі WINDOWS, виконуємо кроки 2-4 на компютері з системою WINDOWS на якому заінстальований Node.js<br>
+<span style='color: #ff5252;'>npm run win</span></p>
+<h3>5.2 Mack OS</h3>
+<p>Для того щоб сворити додаток на системі Mack OS, виконуємо кроки 2-4 на компютері з системою Mack OS на якому заінстальований Node.js<br>
+<span style='color: #ff5252;'>npm run mac</span></p>
+<h1>Документація</h1>
+<p><a href="https://github.com/Fantomchuk/sqliteSzyfr/documentation/jsdoc/index.html" target="_blank">Документація</a></p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

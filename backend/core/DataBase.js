@@ -13,28 +13,40 @@ const userLocalDB = `${app.getPath("userData")}/localDb`;
 if (!fs.existsSync(`${userLocalDB}`)) fs.mkdirSync(`${userLocalDB}`);
 
 /**
- * Służy do lokalnej bazy danych
- * @module DataBase
- * @memberof backendJS
+ * Створюється один екземпляр класу, на якому і проводимо всі операції.
+ * Цей екземпляр експортуємо з цього файлу, і будемо його підключати в інших файлах.
+ * @class DataBase
+ * @classdesc Відповідає за локальну базу даних
+ * @see https://github.com/mapbox/node-sqlite3/wiki/API
+ * @example
+ * const DataBase = require("./backend/core/DataBase");
  */
 class DataBase {
     db = null;
 
+    // Ключ яким зашифрована база даних
     keyToDB = null;
+    // має бути #
 
+    // Назва бази даних в папці файлів
     #dbName = "nameLocalDB";
 
-    #keytarService = "_serviceNameInKeyChain";
+    // Назва сервісу в бібліотеці keytar
+    #keytarService = " ";
 
+    // Назва акаунта в бібліотеці keytar
     #keytarAccount = "_accountNameInKeyChain";
 
+    // Дефолтовий ключ для шифровання створений на основі uuid.
     #keytarKey = `${uuid()}-${uuid()}-${uuid()}-${uuid()}`;
 
-    #flagEncrypted = false;
+    // Змінна яка нам вказує чи база даних в момент запуску додатку є розшифрована.
+    #flagEncrypted = null;
 
-    #encryptionDb = async () => {
+    // Після того як відкриється зєднання з базою, розшифровує її
+    async #encryptionDb() {
         return new Promise((resolve, reject) => {
-            // serialize -> zabezpiecza wykonywanie wszyskich run-ów po kolei
+            // serialize -> забезпечує виконання всіх run-ів по черзі
             this.db.serialize(() => {
                 this.db.run(`PRAGMA cipher_compatibility = 4`, [], (errPragma) => {
                     if (errPragma) {
@@ -61,29 +73,26 @@ class DataBase {
                 });
             });
         });
-    };
+    }
 
-    connect = async () => {
+    // Виконує підключення до локальної бази даних
+    async #connect() {
         if (!this.keyToDB) await this.#getKeyForDB();
 
         return new Promise((resolve, reject) => {
-            // AppColorLog.warning("+++++++++", this.#flagEncrypted);
+            // як база розшиврована то далі можемо робити дії на базі
             if (this.#flagEncrypted === "encrypted") {
-                // AppColorLog.info("::1:: DB open and encrypted");
                 resolve();
                 return;
             }
             if (this.#flagEncrypted === "notEncrypted") {
-                // AppColorLog.info("::2:: DB open and notEncrypted");
                 reject(new Error("encrypted ERROR"));
                 return;
             }
 
-            // AppColorLog.success("--------------");
             if (this.db) {
-                // AppColorLog.success("::3:: DB open, but NOT encrypted");
                 setTimeout(() => {
-                    this.connect()
+                    this.#connect()
                         .then(() => {
                             resolve();
                         })
@@ -107,6 +116,7 @@ class DataBase {
                                 .then(() => app.quit());
                         }, 1000);
                     } else {
+                        // розшифровуємо базу
                         this.#encryptionDb()
                             .then(() => {
                                 resolve();
@@ -118,74 +128,11 @@ class DataBase {
                 });
             }
         });
-    };
+    }
 
-    disconnect = () => {
-        if (this.db) this.db.close();
-        this.db = null;
-    };
-
-    run = (command, params = []) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await this.connect();
-
-                // AppColorLog.success(`${this.db}   ${command}   ${params}`);
-                this.db.run(command, params, function (errorRun) {
-                    if (errorRun) {
-                        const errOut = { ...errorRun };
-                        errOut.command = command;
-                        errOut.params = params;
-                        AppColorLog.error(`error run db 1: ${JSON.stringify(errOut, null, 4)}`);
-                        LocalLogs.add("DataBase", "run", "error 1 run command", errOut);
-                        reject(errOut);
-                    } else {
-                        // this -> kontekst dla db.run, potrzebujemy dla Aktualizacii i dla Usuwania rekordów
-                        const out = {};
-                        if (this.lastID) out.lastID = this.lastID;
-                        if (this.changes) out.changes = this.changes;
-                        resolve(out);
-                    }
-                });
-            } catch (error) {
-                error.command = command;
-                error.params = params;
-                AppColorLog.error(`error run db 2: ${JSON.stringify(error, null, 4)}`);
-                LocalLogs.add("DataBase", "run", "error 2 run command", error);
-                reject(error);
-            }
-        });
-    };
-
-    all = (command, params = []) => {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await this.connect();
-                this.db.all(command, params, (errorAll, list) => {
-                    if (errorAll) {
-                        const errOut = { ...errorAll };
-                        errOut.command = command;
-                        errOut.params = params;
-                        AppColorLog.error(`error all db 1: ${JSON.stringify(errOut, null, 4)}`);
-                        LocalLogs.add("DataBase", "all", "error 1 all command", errOut);
-                        reject(errOut);
-                    } else {
-                        resolve(list);
-                    }
-                });
-            } catch (error) {
-                error.command = command;
-                error.params = params;
-                AppColorLog.error(`error all db 2: ${JSON.stringify(error, null, 4)}`);
-                LocalLogs.add("DataBase", "all", "error 2 all command", error);
-                reject(error);
-            }
-        });
-    };
-
-    #getKeyForDB = async () => {
+    // Отримуємо ключ до розшифрування локальної бази даних
+    async #getKeyForDB() {
         try {
-            // zrobiono przez zmienną bo await, moze sie nadpisac nulem, a set pasword sie wywala jak szybko ustawiamy nowe haslo
             const keyFromKeytar = await keytar.getPassword(this.#keytarService, this.#keytarAccount);
             if (!keyFromKeytar) {
                 if (!this.keyToDB) {
@@ -206,27 +153,158 @@ class DataBase {
             }, 1000);
             return false;
         }
-    };
+    }
 
-    testInsert = async () => {
-        // try {
-        //     await this.connect();
-        //     this.db.serialize(() => {
-        //         this.db.run("CREATE TABLE IF NOT EXISTS lorem (info TEXT)");
-        //         var temp = Date.now();
-        //         var stmt = this.db.prepare("INSERT INTO lorem VALUES (?)");
-        //         for (var i = 0; i < 3; i++) {
-        //             stmt.run("Ipsum " + temp+ "_"+ i);
-        //         }
-        //         stmt.finalize();
-        //     });
-        // }catch (error) {}
-    };
+    // Виконує закриття локальної бази
+    disconnect() {
+        if (this.db) this.db.close();
+        this.db = null;
+    }
 
-    getAllRows = async () => {
+    /**
+     * Використовуємо поданий SQL запит, не повертає в більшості випадків жодного результату
+     * @async
+     * @param {string} command SQL запит
+     * @param {Array} params Параметри до SQL запиту
+     * @returns {Promise<object>}
+     * @example
+     * const DataBase = require("./backend/core/DataBase");
+     * await DataBase.run('UPDATE users SET name=? WHERE id=?', ['Nazar', 2]);
+     *
+     */
+    async run(command, params = []) {
         return new Promise(async (resolve, reject) => {
             try {
-                await this.connect();
+                await this.#connect();
+
+                // AppColorLog.success(`${this.db}   ${command}   ${params}`);
+                this.db.run(command, params, function (errorRun) {
+                    if (errorRun) {
+                        const errOut = { ...errorRun };
+                        errOut.command = command;
+                        errOut.params = params;
+                        AppColorLog.error(`error run db 1: ${JSON.stringify(errOut, null, 4)}`);
+                        LocalLogs.add("DataBase", "run", "error 1 run command", errOut);
+                        reject(errOut);
+                    } else {
+                        // this -> контент для db.run, це потребуємо для актуалізації і видалення рекордів
+                        const out = {};
+                        if (this.lastID) out.lastID = this.lastID;
+                        if (this.changes) out.changes = this.changes;
+                        resolve(out);
+                    }
+                });
+            } catch (error) {
+                error.command = command;
+                error.params = params;
+                AppColorLog.error(`error run db 2: ${JSON.stringify(error, null, 4)}`);
+                LocalLogs.add("DataBase", "run", "error 2 run command", error);
+                reject(error);
+            }
+        });
+    }
+
+    /**
+     * Використовуємо для побрання невеликих кількостей рекордів(даних). Всі рекорди побераються і тримаються в памяті
+     * @async
+     * @param {string} command SQL запит
+     * @param {Array} params Параметри до SQL запиту
+     * @returns {Promise<object>}
+     * @example
+     * const DataBase = require("./backend/core/DataBase");
+     * await DataBase.all('SELECT * FROM users WHERE name=?', ['Nazar]);
+     */
+    async all(command, params = []) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.#connect();
+                this.db.all(command, params, (errorAll, list) => {
+                    if (errorAll) {
+                        const errOut = { ...errorAll };
+                        errOut.command = command;
+                        errOut.params = params;
+                        AppColorLog.error(`error all db 1: ${JSON.stringify(errOut, null, 4)}`);
+                        LocalLogs.add("DataBase", "all", "error 1 all command", errOut);
+                        reject(errOut);
+                    } else {
+                        resolve(list);
+                    }
+                });
+            } catch (error) {
+                error.command = command;
+                error.params = params;
+                AppColorLog.error(`error all db 2: ${JSON.stringify(error, null, 4)}`);
+                LocalLogs.add("DataBase", "all", "error 2 all command", error);
+                reject(error);
+            }
+        });
+    }
+
+    /**
+     * Використовуємо для побрання великої кількості даних
+     * @async
+     * @param {string} command SQL запит
+     * @param {Array} params Параметри до SQL запиту
+     * @returns {Promise<object>}
+     * @example
+     * const DataBase = require("./backend/core/DataBase");
+     * await DataBase.each('SELECT * FROM USERS', []);
+     */
+    async each(command, params = []) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const outList = [];
+                await this.#connect();
+                this.db.each(
+                    command,
+                    params,
+                    (errorOne, oneObj) => {
+                        if (errorOne) {
+                            const errOut = { ...errorOne };
+                            errOut.command = command;
+                            errOut.params = params;
+                            AppColorLog.error(`error each db 1: ${JSON.stringify(errOut, null, 4)}`);
+                            LocalLogs.add("DataBase", "each", "error 1 each command", errOut);
+                        } else {
+                            outList.push(oneObj);
+                        }
+                    },
+                    (errorAll, r) => {
+                        if (errorAll) {
+                            const errOut = { ...errorAll };
+                            errOut.command = command;
+                            errOut.params = params;
+                            AppColorLog.error(`error each db 2: ${JSON.stringify(errOut, null, 4)}`);
+                            LocalLogs.add("DataBase", "each", "error 2 each command", errOut);
+                            reject(errOut);
+                        } else {
+                            resolve(outList);
+                        }
+                    }
+                );
+            } catch (error) {
+                error.command = command;
+                error.params = params;
+                AppColorLog.error(`error each db 3: ${JSON.stringify(error, null, 4)}`);
+                LocalLogs.add("DataBase", "each", "error 3 each command", error);
+                reject(error);
+            }
+        });
+    }
+
+    /**
+     * Повертає всі записи з бази даних для табличкі 'Users'
+     * Дана функція прикладова, для отримання всіх записів якої небудь табличкі варто скористатися з класи яка називається так само як табличка в базі
+     * @example
+     * const list = await DataBase.getAllRows();
+     *
+     * @async
+     * @returns {Promise<object>}
+     */
+    async getAllRows() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.#connect();
 
                 const list = {};
                 this.db.serialize(() => {
@@ -245,6 +323,6 @@ class DataBase {
                 reject(error);
             }
         });
-    };
+    }
 }
 module.exports = new DataBase();

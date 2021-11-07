@@ -88,6 +88,7 @@ ipcMain.on("2000:askServer", async (event) => {
 ipcMain.on("3000:askServer", async (event) => {
     try {
         const db = await DataBase.getAllRows();
+        LocalLogs.add("MAIN", "UsersDBModel", "after");
         event.reply("3000:backToClient", { db, dbPassword: DataBase.keyToDB, action: "afterAdded", pipeList });
     } catch (error) {
         event.reply("3000:backToClient", { error });
